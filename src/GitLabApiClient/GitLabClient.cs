@@ -5,17 +5,15 @@ using GitLabApiClient.Internal.Http;
 using GitLabApiClient.Internal.Http.Serialization;
 using GitLabApiClient.Internal.Queries;
 using GitLabApiClient.Internal.Utilities;
-using GitLabApiClient.Models.Job.Requests;
 using GitLabApiClient.Models.Oauth.Requests;
 using GitLabApiClient.Models.Oauth.Responses;
-using GitLabApiClient.Models.Pipelines.Requests;
 
 namespace GitLabApiClient
 {
     /// <summary>
     /// A client for the GitLab API v4. You can read more about the api here: https://docs.gitlab.com/ce/api/README.html.
     /// </summary>
-    public sealed class GitLabClient
+    public sealed class GitLabClient : IGitLabClient
     {
         private readonly GitLabHttpFacade _httpFacade;
 
@@ -25,7 +23,8 @@ namespace GitLabApiClient
         /// <param name="hostUrl">Host address of GitLab instance. For example https://gitlab.example.com or https://gitlab.example.com/api/v4/ </param>
         /// <param name="authenticationToken">Personal access token. Obtained from GitLab profile settings.</param>
         /// <param name="httpMessageHandler">Optional handler for HTTP messages. Used for SSL pinning or canceling validation for example.</param>
-        public GitLabClient(string hostUrl, string authenticationToken = "", HttpMessageHandler httpMessageHandler = null)
+        /// <param name="clientTimeout">Timespan with the HTTP client timeout if null default timeout is used. Sometimes required to upload files to a gitlab instance depending on filesize and networkspeed.</param>
+        public GitLabClient(string hostUrl, string authenticationToken = "", HttpMessageHandler httpMessageHandler = null, TimeSpan? clientTimeout = null)
         {
             Guard.NotEmpty(hostUrl, nameof(hostUrl));
             Guard.NotNull(authenticationToken, nameof(authenticationToken));
@@ -37,7 +36,8 @@ namespace GitLabApiClient
                 HostUrl,
                 jsonSerializer,
                 authenticationToken,
-                httpMessageHandler);
+                httpMessageHandler,
+                clientTimeout);
 
             var projectQueryBuilder = new ProjectsQueryBuilder();
             var projectIssueNotesQueryBuilder = new ProjectIssueNotesQueryBuilder();
@@ -83,87 +83,87 @@ namespace GitLabApiClient
         /// <summary>
         /// Access GitLab's issues API.
         /// </summary>
-        public IssuesClient Issues { get; }
+        public IIssuesClient Issues { get; }
 
         /// <summary>
         /// Access GitLab's uploads API.
         /// </summary>
-        public UploadsClient Uploads { get; }
+        public IUploadsClient Uploads { get; }
 
         /// <summary>
         /// Access GitLab's merge requests API.
         /// </summary>
-        public MergeRequestsClient MergeRequests { get; }
+        public IMergeRequestsClient MergeRequests { get; }
 
         /// <summary>
         /// Access GitLab's projects API.
         /// </summary>
-        public ProjectsClient Projects { get; }
+        public IProjectsClient Projects { get; }
 
         /// <summary>
         /// Access GitLab's users API.
         /// </summary>
-        public UsersClient Users { get; }
+        public IUsersClient Users { get; }
 
         /// <summary>
         /// Access GitLab's groups API.
         /// </summary>
-        public GroupsClient Groups { get; }
+        public IGroupsClient Groups { get; }
 
         /// <summary>
         /// Access GitLab's branches API.
         /// </summary>
-        public BranchClient Branches { get; }
+        public IBranchClient Branches { get; }
 
         /// <summary>
         /// Access GitLab's release API.
         /// </summary>
-        public ReleaseClient Releases { get; }
+        public IReleaseClient Releases { get; }
 
         /// <summary>
         /// Access GitLab's tags API.
         /// </summary>
-        public TagClient Tags { get; }
+        public ITagClient Tags { get; }
 
         /// <summary>
         /// Access GitLab's webhook API.
         /// </summary>
-        public WebhookClient Webhooks { get; }
+        public IWebhookClient Webhooks { get; }
 
         /// <summary>
         /// Access GitLab's commits API.
         /// </summary>
-        public CommitsClient Commits { get; }
+        public ICommitsClient Commits { get; }
 
         /// <summary>
         /// Access GitLab's trees API.
         /// </summary>
-        public TreesClient Trees { get; }
+        public ITreesClient Trees { get; }
 
         /// <summary>
         /// Access GitLab's files API.
         /// </summary>
-        public FilesClient Files { get; }
+        public IFilesClient Files { get; }
 
         /// <summary>
         /// Access GitLab's Markdown API.
         /// </summary>
-        public MarkdownClient Markdown { get; }
+        public IMarkdownClient Markdown { get; }
 
         /// <summary>
         /// Acess GitLab's Pipeline API.
         /// </summary>
-        public PipelineClient Pipelines { get; }
+        public IPipelineClient Pipelines { get; }
 
         /// <summary>
         /// Access GitLab's Runners API.
         /// </summary>
-        public RunnersClient Runners { get; }
+        public IRunnersClient Runners { get; }
 
         /// <summary>
         /// Access GitLab's ToDo-List API.
         /// </summary>
-        public ToDoListClient ToDoList { get; }
+        public IToDoListClient ToDoList { get; }
 
         /// <summary>
         /// Provides a client connection to make rest requests to HTTP endpoints.

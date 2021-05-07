@@ -20,7 +20,7 @@ namespace GitLabApiClient
     /// <exception cref="GitLabException">Thrown if request to GitLab API does not indicate success</exception>
     /// <exception cref="HttpRequestException">Thrown if request to GitLab API fails</exception>
     /// </summary>
-    public sealed class IssuesClient
+    public sealed class IssuesClient : IIssuesClient
     {
         private readonly GitLabHttpFacade _httpFacade;
         private readonly IssuesQueryBuilder _queryBuilder;
